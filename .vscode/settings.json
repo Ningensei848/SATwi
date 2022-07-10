@@ -1,0 +1,32 @@
+{
+    "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.banditEnabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=119"
+    ],
+    "python.formatting.blackArgs": [
+        "--line-length=119"
+    ],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.markdownlint": true
+    },
+    "editor.rulers": [
+        88,
+        119
+    ],
+    "python.analysis.completeFunctionParens": true,
+    "python.analysis.logLevel": "Warning",
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    },
+    "markdownlint.config": {
+        "default": true,
+        "MD013": false,
+        "MD033": false
+    }
+}

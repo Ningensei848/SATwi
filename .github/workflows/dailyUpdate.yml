@@ -1,0 +1,114 @@
+name: Archive tweets daily
+
+on:
+  schedule:
+    # <!-- UTC --> 分　時　日　月　曜日（星期）/ min hour day month weekday
+    - cron: "34 3 * * *" # 3 - 9 = 18 時に一回実行される（Actionの基準時は UTC(GMT) であるため）
+  workflow_dispatch:
+
+env:
+  TIME_RANGE: 25 # Retrieve tweets going back XX hours
+  PYTHON_VERSION: "3.10"
+  POETRY_VERSION: "1.1.13"
+  POETRY_URL: https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py
+  LINE_NOTIFY_ENDPOINT: https://notify-api.line.me/api/notify
+  LINE_ACCESS_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
+  WORKFLOWS_URL: https://github.com/${{ github.repository }}/actions
+
+jobs:
+  check-visibility:
+    runs-on: ubuntu-22.04
+    outputs:
+      IS_PRIVATE: ${{ steps.api-request.outputs.result }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Check visibility of this repo via GitHub API
+        id: api-request
+        run: |
+          is_private=$(python script/checkVisibility.py)
+          echo "::set-output name=result::$is_private"
+        env:
+          OWNER_AND_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  archive-tweets:
+    runs-on: ubuntu-22.04
+    needs: check-visibility
+    # CAUTION! values are strictly comparable. cf. https://note.sarisia.cc/entry/boolean-in-github-actions
+    # If true, it is verified that this repository is private so this workflow runs and collects tweets
+    if: needs.check-visibility.outputs.IS_PRIVATE == 'true'
+    steps:
+      #----------------------------------------------
+      # check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      #----------------------------------------------
+      # install & configure poetry
+      #----------------------------------------------
+      - name: Install Poetry
+        run: |
+          curl -sSL ${{ env.POETRY_URL }} | python - --version ${{ env.POETRY_VERSION }}
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      #----------------------------------------------
+      # load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      #----------------------------------------------
+      # install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: |
+          poetry config --local virtualenvs.in-project true
+          poetry install --no-interaction --no-root
+      #----------------------------------------------
+      # run script
+      #----------------------------------------------
+      - name: Exec main process
+        run: |
+          poetry run python script/dailyUpdate.py
+        env:
+          TIME_RANGE: ${{ env.TIME_RANGE }}
+          BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+      #----------------------------------------------
+      # commit and push
+      #----------------------------------------------
+      - name: Git commit by BOT
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git diff --cached --quiet || git commit -m "[GitHub Actions BOT] Update race list || $(date)" \
+          && git pull --rebase && git push
+      #----------------------------------------------
+      # (optional) notify via LINE
+      #----------------------------------------------
+      - name: Notify LINE when job failed if the token is set
+        if: ${{ failure() && env.LINE_ACCESS_TOKEN != '' }}
+        run: |
+          curl -H POST '${{ env.LINE_NOTIFY_ENDPOINT }}' \
+            -H 'Authorization: Bearer ${{ env.LINE_ACCESS_TOKEN }}' \
+            -F "message=$MESSAGE"
+        env:
+          MESSAGE: "Jobs on GitHub Actions are failed. Please re-run this workflow. \n\n cf. ${{ env.WORKFLOWS_URL }}"
+
+  reason-for-rejection-of-archiving:
+    runs-on: ubuntu-22.04
+    needs: check-visibility
+    if: needs.check-visibility.outputs.IS_PRIVATE != 'true'
+    steps:
+      - name: Please make sure that this repository has **private** visibility
+        run: |
+          echo "Please make sure that this repository has **private** visibility."

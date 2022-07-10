@@ -1,0 +1,61 @@
+{
+    "@desc": "API を叩く際に渡すクエリパラメタの設定を行える",
+    "@note": "`max_results`, `start_time`, `pagination_token` はスクリプト側で指定するので不要",
+    "@confer": "https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet",
+    "expansions": [
+        "attachments.poll_ids",
+        "attachments.media_keys",
+        // "author_id",
+        // "entities.mentions.username",
+        "geo.place_id"
+        // "in_reply_to_user_id",
+        // "referenced_tweets.id"
+        // "referenced_tweets.id.author_id"
+    ],
+    "tweet.fields": [
+        "attachments",
+        "author_id",
+        "context_annotations",
+        "conversation_id",
+        "created_at",
+        "entities",
+        "geo",
+        "in_reply_to_user_id",
+        "lang",
+        "public_metrics",
+        // "non_public_metrics",
+        // "organic_metrics",
+        // "promoted_metrics",
+        "possibly_sensitive",
+        "referenced_tweets",
+        "reply_settings",
+        "source"
+        // "withheld"
+    ],
+    "media.fields": [
+        "duration_ms",
+        "url",
+        // "preview_image_url",
+        "height",
+        "width",
+        "alt_text",
+        "public_metrics"
+        // "non_public_metrics",
+        // "organic_metrics",
+        // "promoted_metrics",
+        // "variants",
+    ],
+    "place.fields": [
+        "contained_within",
+        "country",
+        "country_code",
+        "geo",
+        "name",
+        "place_type"
+    ],
+    "poll.fields": [
+        "duration_minutes",
+        "end_datetime",
+        "voting_status"
+    ]
+}
