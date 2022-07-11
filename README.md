@@ -113,7 +113,7 @@ _optional_ : (integer)
 If specified, determines how many hours of tweets to retrieve retroactively.
 Note that this param is limited to two digits because of the convenience of the python library, [`datetime`](https://docs.python.org/3/library/datetime.html#timedelta-objects).
 
-(Default is `24 + 1`)
+(Default is `25`)
 
 **Combined with `crontab`, it offers greater value** (See the [best practice](#best-practice) for more information.).
 
