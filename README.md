@@ -106,6 +106,24 @@ If true, it collects not only tweets "from" the target(s), but also tweets "to" 
 
 (Default is `false`)
 
+#### ENABLE_LIKED_TWEETS
+
+_optional_ : (boolean)
+
+If true, collect the last 100 "liked" tweets.
+
+(Default is `false`)
+
+<details>
+<summary>Tips: If you want to retrieve past likes more than hundred ...</summary>
+
+Unlike [`/users/:id/tweets`](https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets), you can go back as far as the Tweet caps will allow, even to past Likes.
+However, you can only request [up to 75 likes in 15 minutes](https://developer.twitter.com/en/docs/twitter-api/tweets/likes/api-reference/get-users-id-liked_tweets) (= 7500 likes).
+In other words, it is theoretically possible to get all the likes, but it is not practical to do so with GitHub Actions.
+Instead, we are preparing a dedicated Jupyter Notebook on Google Colaboratory (coming soon !).
+
+</details>
+
 #### TIME_RANGE
 
 _optional_ : (integer)
@@ -195,23 +213,16 @@ Please let us know in [the Issue](https://github.com/Ningensei848/SATwi/issues) 
 
 ### WIP
 
-- [x] 過去 24 時間に投稿されたツイートを収集し、日毎にファイルを分けて保存する
-- [x] 指定した時間ごとに定期実行する via GitHub Actions
-- [ ] いいね欄のツイートも別途保管する
-- [x] 失敗時に LINE 通知する
-- [x] **対象に対してメンションされたツイート**も収集し、日毎にファイルを分けて保存する
+- [ ] 画像つきのツイートを行なった時、画像+本文でLINEに通知する
+- [ ] もっと実行頻度を上げたい人のための Tips を用意
+- [ ] 画像や動画等も抜いてきて保存する
 
 ### TODO
 
 - [ ] RT したツイートは収集しない (exclude tweets)
-- [ ] LIKE したツイートは不要 (exclude likes)
 - [ ] ID だけを抜き出した一覧ファイルを作り、再配布可能にする
-- [ ] 画像や動画等も抜いてきて保存する
-- [ ] 画像つきのツイートを行なった時、画像+本文でLINEに通知する
-- [ ] 画像が取得されるごとに LINE 通知する（現在は失敗時のみ対応）
 - [ ] 集めたツイートを規約に沿って公開できるサイト
-  - [ ] 削除済みのツイを一覧で見る
-- [ ] もっと実行頻度を上げたい人のための Tips を用意
+- [ ] 削除済みのツイを一覧で見る
 
 #### via Jupyter notebook on Colab
 
@@ -219,6 +230,14 @@ Please let us know in [the Issue](https://github.com/Ningensei848/SATwi/issues) 
 - [ ] Follow 一覧を取得する
 - [ ] Follower 一覧を取得する
 - [ ] OAuth 1.0a に対応する
+
+#### Done
+
+- [x] 過去 24 時間に投稿されたツイートを収集し、日毎にファイルを分けて保存する
+- [x] 指定した時間ごとに定期実行する via GitHub Actions
+- [x] いいね欄のツイートも別途保管する
+- [x] 失敗時に LINE 通知する
+- [x] **対象に対してメンションされたツイート**も収集し、日毎にファイルを分けて保存する
 
 </details>
 

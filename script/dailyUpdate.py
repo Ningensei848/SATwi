@@ -18,6 +18,7 @@ START_TIME = datetime.now() + timedelta(hours=-TIME_RANGE)
 
 # オプション設定
 ENABLE_MENTION = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_MENTION", "false")])
+ENABLE_LIKED_TWEETS = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_LIKED_TWEETS", "false")])
 
 # 正規表現
 pattern_user_id = re.compile(r"\d+")
@@ -52,6 +53,11 @@ def getParams(pagination_token: str = None):
 def procedure(user_id: int, endpoint="tweets", next_token=None):
     url = createTimelinesUrl(user_id, endpoint)
     params = getParams() if next_token is None else getParams(next_token)
+
+    # /user/:id/liked_tweets does not have a parameter `start_time`, an error occurs if it is not deleted.
+    if endpoint == "liked_tweets":
+        del params["start_time"]
+
     json_response = connectEndpoint(url, params)
     # print(json.dumps(json_response, indent=4, sort_keys=True, ensure_ascii=False))
     # TIME_RANGE の範囲ではツイートが見つけられなかった場合、response には `data` が含まれない
@@ -59,6 +65,9 @@ def procedure(user_id: int, endpoint="tweets", next_token=None):
         return
     else:
         saveAsJSON(user_id, endpoint, json_response)
+
+    if endpoint == "liked_tweets":
+        return
 
     if "meta" in json_response and "next_token" in json_response["meta"]:
         pagination_token = json_response["meta"]["next_token"]
@@ -84,6 +93,8 @@ def main():
         procedure(user_id)
         if ENABLE_MENTION:
             procedure(user_id, endpoint="mentions")
+        if ENABLE_LIKED_TWEETS:
+            procedure(user_id, endpoint="liked_tweets")
 
     return
 
