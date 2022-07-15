@@ -44,10 +44,7 @@ Therefore, we will "import" this repository instead.
 cf. [Importing a repository with GitHub Importer - GitHub Docs](https://docs.github.com/en/get-started/importing-your-projects-to-github/importing-source-code-to-github/importing-a-repository-with-github-importer)
 
 1. Click [**Import repository**]
-2. Enter the following URL:
-
-- `https://github.com/Ningensei848/SATwi`
-
+2. Enter the following URL: `https://github.com/Ningensei848/SATwi`
 3. Name your new repository
 4. Make repository visibility private
 5. Click [**Begin import**]
@@ -120,7 +117,10 @@ If true, collect the last 100 "liked" tweets.
 Unlike [`/users/:id/tweets`](https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets), you can go back as far as the Tweet caps will allow, even to past Likes.
 However, you can only request [up to 75 likes in 15 minutes](https://developer.twitter.com/en/docs/twitter-api/tweets/likes/api-reference/get-users-id-liked_tweets) (= 7500 likes).
 In other words, it is theoretically possible to get all the likes, but it is not practical to do so with GitHub Actions.
-Instead, we are preparing a dedicated Jupyter Notebook on Google Colaboratory (coming soon !).
+
+Instead, we are preparing a dedicated [Jupyter Notebook on Google Colaboratory](notebook/bulk_get_tweets.ipynb).
+
+- 日本語版 notebook は[こちら](https://gist.github.com/Ningensei848/e6de072a4612879d4ac5487ca84c26b7)
 
 </details>
 
@@ -226,7 +226,7 @@ Please let us know in [the Issue](https://github.com/Ningensei848/SATwi/issues) 
 
 #### via Jupyter notebook on Colab
 
-- [ ] 過去 3200 件分のツイートも取得する
+- [x] 過去 3200 件分のツイートも取得する
 - [ ] Follow 一覧を取得する
 - [ ] Follower 一覧を取得する
 - [ ] OAuth 1.0a に対応する
