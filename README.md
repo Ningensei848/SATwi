@@ -51,6 +51,18 @@ cf. [Importing a repository with GitHub Importer - GitHub Docs](https://docs.git
 
 </details>
 
+<details>
+<summary>3. Enable Actions</summary>
+
+For security reasons, Actions are initially disabled.
+Please select \[settings\] > \[Actions\] in the imported repository and change the [Actions permissions].
+The default setting is "Disable Action", which means that no workflows will be executed.
+And change this to "Allow all actions and reusable workflows" and \[save\].
+
+Of course, if you don't want to allow all, you can read [the other options carefully and set them accordingly](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#managing-github-actions-permissions-for-your-repository).
+
+</details>
+
 ## Configuration
 
 There are three items in SATwi that should be set.
