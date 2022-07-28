@@ -7,7 +7,9 @@ on:
   workflow_dispatch:
 
 env:
-  TIME_RANGE: 25 # Retrieve tweets going back XX hours
+  TIME_RANGE: ${{ secrets.TIME_RANGE }} # Retrieve tweets going back XX hours; default is 25 (= 24 + 1)
+  ENABLE_MENTION: ${{ secrets.ENABLE_MENTION }}
+  ENABLE_LIKED_TWEETS: ${{ secrets.ENABLE_LIKED_TWEETS }}
   PYTHON_VERSION: "3.10"
   POETRY_VERSION: "1.1.13"
   POETRY_URL: https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py
@@ -22,7 +24,7 @@ jobs:
       IS_PRIVATE: ${{ steps.api-request.outputs.result }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check visibility of this repo via GitHub API
         id: api-request
         run: |
@@ -43,10 +45,10 @@ jobs:
       # check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up python
         id: setup-python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       #----------------------------------------------
@@ -61,7 +63,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -80,8 +82,10 @@ jobs:
         run: |
           poetry run python script/dailyUpdate.py
         env:
-          TIME_RANGE: ${{ env.TIME_RANGE }}
           BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+          TIME_RANGE: ${{ env.TIME_RANGE }}
+          ENABLE_MENTION: ${{ env.ENABLE_MENTION }}
+          ENABLE_LIKED_TWEETS: ${{ env.ENABLE_LIKED_TWEETS }}
       #----------------------------------------------
       # commit and push
       #----------------------------------------------

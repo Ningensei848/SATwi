@@ -13,12 +13,13 @@ load_dotenv()  # take environment variables from `.env``
 
 cwd = Path.cwd()
 # 現時点からちょうど n 時間前の日付を取得
-TIME_RANGE = int(os.environ.get("TIME_RANGE", 24 + 1))
+t = os.environ.get("TIME_RANGE", "")
+TIME_RANGE = int(t) if len(t) else 24 + 1
 START_TIME = datetime.now() + timedelta(hours=-TIME_RANGE)
 
 # オプション設定
-ENABLE_MENTION = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_MENTION", "false")])
-ENABLE_LIKED_TWEETS = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_LIKED_TWEETS", "false")])
+ENABLE_MENTION = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_MENTION", "false").lower()])
+ENABLE_LIKED_TWEETS = bool({"t": 1, "true": 1, "f": 0, "false": 0}[os.environ.get("ENABLE_LIKED_TWEETS", "false").lower()])
 
 # 正規表現
 pattern_user_id = re.compile(r"\d+")
